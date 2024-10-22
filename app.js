@@ -21,6 +21,12 @@ installButton.addEventListener('click', async () => {
   installButton.classList.add('hidden');
 });
 
+// Preloader
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+  preloader.classList.add('hidden');
+});
+
 // Initialize Swiper
 function initSwipers() {
   new Swiper('.top-banner-swiper', {
@@ -94,6 +100,19 @@ function initSwipers() {
       },
     },
   });
+
+  new Swiper('.about-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+  });
 }
 
 // Fetch playlists
@@ -164,6 +183,30 @@ function createSponsorSlider() {
   });
 }
 
+// Create artists section
+function createArtistsSection() {
+  const artists = [
+    { name: 'MC Rítmico', image: 'https://source.unsplash.com/random/400x400?rapper', description: 'Maestro del flow y las rimas ingeniosas' },
+    { name: 'DJ Scratch', image: 'https://source.unsplash.com/random/400x400?dj', description: 'Virtuoso de los platos y creador de beats únicos' },
+    { name: 'B-Girl Flex', image: 'https://source.unsplash.com/random/400x400?dancer', description: 'Reina del breakdance y la expresión corporal' },
+    { name: 'Grafitero Urbano', image: 'https://source.unsplash.com/random/400x400?graffiti', description: 'Artista visual que da color a nuestros eventos' },
+  ];
+
+  const artistsContainer = document.getElementById('artistsContainer');
+  artists.forEach(artist => {
+    const artistElement = document.createElement('div');
+    artistElement.className = 'artist-card bg-gray-800 rounded-lg overflow-hidden shadow-lg';
+    artistElement.innerHTML = `
+      <img src="${artist.image}" alt="${artist.name}" class="w-full h-64 object-cover">
+      <div class="p-4">
+        <h3 class="text-xl font-bold mb-2 text-orange-600">${artist.name}</h3>
+        <p class="text-gray-400">${artist.description}</p>
+      </div>
+    `;
+    artistsContainer.appendChild(artistElement);
+  });
+}
+
 // Initialize map
 function initMap() {
   const map = L.map('map').setView([51.505, -0.09], 13);
@@ -182,6 +225,7 @@ function init() {
   fetchPlaylists();
   fetchShorts();
   createSponsorSlider();
+  createArtistsSection();
   initMap();
 }
 
