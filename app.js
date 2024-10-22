@@ -63,6 +63,33 @@ function initSwipers() {
     },
   });
 
+  new Swiper('.playlist-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      768: {
+        slidesPerView: 3,
+        spaceBetween: 30,
+      },
+      1024: {
+        slidesPerView: 4,
+        spaceBetween: 40,
+      },
+    },
+  });
+
   new Swiper('.sponsor-swiper', {
     slidesPerView: 2,
     spaceBetween: 10,
@@ -135,71 +162,19 @@ async function fetchPlaylists() {
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=10&key=${API_KEY}`);
     const data = await response.json();
-    console.log('Playlists data:', data); // Log the data to check what we're receiving
     const playlistsContainer = document.getElementById('playlistsContainer');
-    
-    if (!playlistsContainer) {
-      console.error('Playlists container not found in the DOM');
-      return;
-    }
-    
-    playlistsContainer.innerHTML = ''; // Clear existing content
-    
-    if (!data.items || data.items.length === 0) {
-      console.log('No playlists found');
-      playlistsContainer.innerHTML = '<p class="text-center text-gray-500">No playlists available at the moment.</p>';
-      return;
-    }
     
     data.items.forEach(playlist => {
       const playlistElement = document.createElement('div');
-      playlistElement.className = 'swiper-slide';
+      playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       playlistElement.innerHTML = `
-        <div class="bg-white rounded-lg overflow-hidden shadow-lg">
-          <div class="relative">
-            <img src="${playlist.snippet.thumbnails.medium.url}" alt="${playlist.snippet.title}" class="w-full h-48 object-cover">
-            <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
-              PLAYLIST
-            </div>
-          </div>
-          <div class="p-4">
-            <h3 class="text-lg font-semibold mb-2 line-clamp-2">${playlist.snippet.title}</h3>
-            <p class="text-sm text-gray-600 line-clamp-2">${playlist.snippet.description}</p>
-            <button onclick="playPlaylist('${playlist.id}')" class="mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full flex items-center justify-center w-full">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M4 4l12 6-12 6z"/>
-              </svg>
-              Reproducir todo
-            </button>
-          </div>
+        <img data-src="${playlist.snippet.thumbnails.medium.url}" alt="${playlist.snippet.title}" class="lazyload w-full h-48 object-cover">
+        <div class="p-4">
+          <h3 class="text-xl font-bold mb-2 text-orange-500">${playlist.snippet.title}</h3>
+          <p class="text-gray-400">${playlist.snippet.description.slice(0, 100)}...</p>
         </div>
       `;
       playlistsContainer.appendChild(playlistElement);
-    });
-
-    // Reinitialize Swiper
-    new Swiper('.playlist-swiper', {
-      slidesPerView: 1,
-      spaceBetween: 20,
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-      breakpoints: {
-        640: {
-          slidesPerView: 2,
-        },
-        768: {
-          slidesPerView: 3,
-        },
-        1024: {
-          slidesPerView: 4,
-        },
-      },
     });
   } catch (error) {
     console.error('Error fetching playlists:', error);
@@ -211,99 +186,22 @@ async function fetchShorts() {
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&type=video&videoDuration=short&maxResults=10&key=${API_KEY}`);
     const data = await response.json();
-    console.log('Shorts data:', data); // Log the data to check what we're receiving
     const shortsContainer = document.getElementById('shortsContainer');
-    
-    if (!shortsContainer) {
-      console.error('Shorts container not found in the DOM');
-      return;
-    }
-    
-    shortsContainer.innerHTML = ''; // Clear existing content
-    
-    if (!data.items || data.items.length === 0) {
-      console.log('No shorts found');
-      shortsContainer.innerHTML = '<p class="text-center text-gray-500">No shorts available at the moment.</p>';
-      return;
-    }
     
     data.items.forEach(short => {
       const shortElement = document.createElement('div');
-      shortElement.className = 'relative w-full pb-[177.77%] bg-gray-100 rounded-lg overflow-hidden shadow-lg';
+      shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       shortElement.innerHTML = `
-        <img src="${short.snippet.thumbnails.medium.url}" alt="${short.snippet.title}" class="absolute inset-0 w-full h-full object-cover">
-        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black to-transparent p-4">
-          <h4 class="text-white font-semibold line-clamp-2">${short.snippet.title}</h4>
+        <img data-src="${short.snippet.thumbnails.medium.url}" alt="${short.snippet.title}" class="lazyload w-full h-36 object-cover">
+        <div class="p-2">
+          <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
         </div>
-        <button onclick="playShort('${short.id.videoId}')" class="absolute inset-0 w-full h-full flex items-center justify-center">
-          <svg class="w-16 h-16 text-white opacity-80 hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M4 4l12 6-12 6z"/>
-          </svg>
-        </button>
       `;
       shortsContainer.appendChild(shortElement);
     });
   } catch (error) {
     console.error('Error fetching shorts:', error);
   }
-}
-
-// Function to play a playlist
-function playPlaylist(playlistId) {
-  console.log('Playing playlist:', playlistId); // Log the playlist ID
-  const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
-  modal.innerHTML = `
-    <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-4xl">
-      <div class="relative pt-[56.25%]">
-        <iframe 
-          src="https://www.youtube.com/embed/videoseries?list=${playlistId}" 
-          class="absolute inset-0 w-full h-full"
-          frameborder="0" 
-          allow="autoplay; encrypted-media" 
-          allowfullscreen
-        ></iframe>
-      </div>
-      <div class="p-4 flex justify-end">
-        <button onclick="closeModal(this)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-          Cerrar
-        </button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-}
-
-// Function to play a short
-function playShort(videoId) {
-  console.log('Playing short:', videoId); // Log the video ID
-  const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
-  modal.innerHTML = `
-    <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-sm">
-      <div class="relative pt-[177.77%]">
-        <iframe 
-          src="https://www.youtube.com/embed/${videoId}" 
-          class="absolute inset-0 w-full h-full"
-          frameborder="0" 
-          allow="autoplay; encrypted-media" 
-          allowfullscreen
-        ></iframe>
-      </div>
-      <div class="p-4 flex justify-end">
-        <button onclick="closeModal(this)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-          Cerrar
-        </button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-}
-
-// Function to close modal
-function closeModal(button) {
-  const modal = button.closest('.fixed');
-  modal.remove();
 }
 
 // Create sponsor slider
@@ -375,7 +273,6 @@ const artists = [
       twitter: 'grafitero_urbano',
       youtube: 'GrafiteroUrbano'
     },
-    
     music: ['VIDEO_ID_7', 'VIDEO_ID_8']
   },
 ];
