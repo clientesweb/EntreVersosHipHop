@@ -63,33 +63,6 @@ function initSwipers() {
     },
   });
 
-  new Swiper('.playlist-swiper', {
-    slidesPerView: 1,
-    spaceBetween: 10,
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-    breakpoints: {
-      640: {
-        slidesPerView: 2,
-        spaceBetween: 20,
-      },
-      768: {
-        slidesPerView: 3,
-        spaceBetween: 30,
-      },
-      1024: {
-        slidesPerView: 4,
-        spaceBetween: 40,
-      },
-    },
-  });
-
   new Swiper('.sponsor-swiper', {
     slidesPerView: 2,
     spaceBetween: 10,
@@ -160,7 +133,7 @@ function initSwipers() {
 // Fetch playlists
 async function fetchPlaylists() {
   try {
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=10&key=${API_KEY}`);
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=10&key=${API_KEY}`);
     const data = await response.json();
     const playlistsContainer = document.getElementById('playlistsContainer');
     
@@ -168,16 +141,55 @@ async function fetchPlaylists() {
       const playlistElement = document.createElement('div');
       playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       playlistElement.innerHTML = `
-        <img data-src="${playlist.snippet.thumbnails.medium.url}" alt="${playlist.snippet.title}" class="lazyload w-full h-48 object-cover">
+        <div class="relative pb-[56.25%] h-0">
+          <iframe 
+            src="https://www.youtube.com/embed/videoseries?list=${playlist.id}" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen
+            class="absolute top-0 left-0 w-full h-full"
+          ></iframe>
+        </div>
         <div class="p-4">
           <h3 class="text-xl font-bold mb-2 text-orange-500">${playlist.snippet.title}</h3>
           <p class="text-gray-400">${playlist.snippet.description.slice(0, 100)}...</p>
+          <p class="text-sm text-gray-500 mt-2">${playlist.contentDetails.itemCount} videos</p>
         </div>
       `;
       playlistsContainer.appendChild(playlistElement);
     });
+
+    // Reinicializar el Swiper después de agregar las playlists
+    new Swiper('.playlist-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 10,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+          spaceBetween: 20,
+        },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+        },
+        1024: {
+          slidesPerView: 4,
+          spaceBetween: 40,
+        },
+      },
+    });
   } catch (error) {
     console.error('Error fetching playlists:', error);
+    const playlistsContainer = document.getElementById('playlistsContainer');
+    playlistsContainer.innerHTML = '<p class="text-red-500">Error al cargar las playlists. Por favor, intenta de nuevo más tarde.</p>';
   }
 }
 
@@ -192,15 +204,41 @@ async function fetchShorts() {
       const shortElement = document.createElement('div');
       shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       shortElement.innerHTML = `
-        <img data-src="${short.snippet.thumbnails.medium.url}" alt="${short.snippet.title}" class="lazyload w-full h-36 object-cover">
+        <div class="relative pb-[177.77%] cursor-pointer short-thumbnail" data-video-id="${short.id.videoId}">
+          <img src="${short.snippet.thumbnails.high.url}" alt="${short.snippet.title}" class="absolute top-0 left-0 w-full h-full object-cover">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <svg class="w-20 h-20 text-white opacity-75" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 0a10 10 0 100 20 10 10 0 000-20zm-2 14.5v-9l6 4.5-6 4.5z" />
+            </svg>
+          </div>
+        </div>
         <div class="p-2">
           <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
         </div>
       `;
       shortsContainer.appendChild(shortElement);
     });
+
+    // Agregar event listener para cargar el iframe cuando se hace clic en la miniatura
+    shortsContainer.addEventListener('click', (e) => {
+      const thumbnail = e.target.closest('.short-thumbnail');
+      if (thumbnail) {
+        const videoId = thumbnail.dataset.videoId;
+        thumbnail.innerHTML = `
+          <iframe 
+            src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            class="absolute top-0 left-0 w-full h-full"
+          ></iframe>
+        `;
+      }
+    });
   } catch (error) {
     console.error('Error fetching shorts:', error);
+    const shortsContainer = document.getElementById('shortsContainer');
+    shortsContainer.innerHTML = '<p class="text-red-500">Error al cargar los shorts. Por favor, intenta de nuevo más tarde.</p>';
   }
 }
 
@@ -321,7 +359,7 @@ function openArtistModal(artistName) {
   }
 
   modalArtistMusic.innerHTML = '';
-  artist.music.forEach(videoId => {
+  artist.music.forEach(videoId  => {
     const iframe = document.createElement('iframe');
     iframe.width = '100%';
     iframe.height = '315';
