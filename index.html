@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entre Versos Hip Hop</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+</head>
+<body class="bg-black text-white">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-90 backdrop-filter backdrop-blur-lg">
+        <div id="top-banner" class="bg-orange-600 text-white py-2">
+            <div class="swiper top-banner-swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide text-center">¡Nuevo álbum disponible ahora! Escúchalo en todas las plataformas</div>
+                    <div class="swiper-slide text-center">Próximo concierto: 15 de Julio en el Estadio Nacional</div>
+                    <div class="swiper-slide text-center">Suscríbete a nuestro canal de YouTube para contenido exclusivo</div>
+                </div>
+            </div>
+        </div>
+        <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="logo.png" alt="Entre Versos Hip Hop Logo" class="h-12 mr-4">
+                <h1 class="text-2xl font-bold text-orange-600">Entre Versos Hip Hop</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-xl hover:text-orange-600 transition duration-300"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-xl hover:text-orange-600 transition duration-300"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-xl hover:text-orange-600 transition duration-300"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-xl hover:text-orange-600 transition duration-300"><i class="fab fa-youtube"></i></a>
+                <button id="installPWA" class="bg-orange-600 text-white px-4 py-2 rounded-full hidden">
+                    <i class="fas fa-download mr-2"></i>Instalar App
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="pt-24">
+        <section id="hero" class="relative h-screen">
+            <div class="swiper hero-swiper h-full">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide bg-cover bg-center" style="background-image: url('https://source.unsplash.com/random/1920x1080?hiphop')"></div>
+                    <div class="swiper-slide bg-cover bg-center" style="background-image: url('https://source.unsplash.com/random/1920x1080?rap')"></div>
+                    <div class="swiper-slide bg-cover bg-center" style="background-image: url('https://source.unsplash.com/random/1920x1080?music')"></div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="text-center">
+                    <h2 class="text-5xl font-bold mb-4 text-orange-600">Bienvenido a Entre Versos Hip Hop</h2>
+                    <p class="text-xl mb-8">Desata el Poder del Hip Hop</p>
+                    <a href="#playlists" class="bg-orange-600 text-white px-6 py-3 rounded-full text-lg hover:bg-orange-700 transition duration-300">
+                        <i class="fas fa-play mr-2"></i>Explorar Playlists
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="playlists" class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Últimas Playlists</h2>
+                <div class="swiper playlist-swiper">
+                    <div class="swiper-wrapper" id="playlistsContainer"></div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="shorts" class="py-16 bg-gray-900">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Shorts Tendencia</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="shortsContainer"></div>
+            </div>
+        </section>
+
+        <section id="sponsors" class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Nuestros Patrocinadores</h2>
+                <div class="swiper sponsor-swiper">
+                    <div class="swiper-wrapper" id="sponsorSlider"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-16 bg-gray-900">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Sobre Nosotros</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 text-orange-600">Nuestra Historia</h3>
+                        <p class="mb-4">Entre Versos Hip Hop nació de una pasión por la cultura y música auténtica del hip hop. Nos esforzamos por llevar los mejores beats y rimas a nuestra audiencia.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 text-orange-600">Nuestros Valores</h3>
+                        <ul class="list-disc list-inside">
+                            <li><i class="fas fa-check text-orange-600 mr-2"></i>Autenticidad en la música</li>
+                            <li><i class="fas fa-check text-orange-600 mr-2"></i>Apoyo a artistas emergentes</li>
+                            <li><i class="fas fa-check text-orange-600 mr-2"></i>Preservación de la cultura hip hop</li>
+                            <li><i class="fas fa-check text-orange-600 mr-2"></i>Innovación en la producción de sonido</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="location" class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Nuestra Ubicación</h2>
+                <div id="map" class="h-96 rounded-lg shadow-lg"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-orange-600 mb-4">Entre Versos Hip Hop</h3>
+                    <p class="text-sm mb-4">Elevando la Cultura del Hip Hop</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-2xl hover:text-orange-600 transition duration-300"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-2xl hover:text-orange-600 transition duration-300"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-2xl hover:text-orange-600 transition duration-300"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-2xl hover:text-orange-600 transition duration-300"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold text-orange-600 mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-orange-600 transition duration-300">Inicio</a></li>
+                        <li><a href="#playlists" class="hover:text-orange-600 transition duration-300">Playlists</a></li>
+                        <li><a href="#shorts" class="hover:text-orange-600 transition duration-300">Shorts</a></li>
+                        <li><a href="#about" class="hover:text-orange-600 transition duration-300">Sobre Nosotros</a></li>
+                        <li><a href="#location" class="hover:text-orange-600 transition duration-300">Ubicación</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold text-orange-600 mb-4">Contacto</h4>
+                    <p class="mb-2"><i class="fas fa-map-marker-alt text-orange-600 mr-2"></i>123 Calle Hip Hop, Ciudad Ritmo</p>
+                    <p class="mb-2"><i class="fas fa-phone text-orange-600 mr-2"></i>+1 234 567 890</p>
+                    <p class="mb-2"><i class="fas fa-envelope text-orange-600 mr-2"></i>info@entreversos.com</p>
+                </div>
+            </div>
+            <div class="mt-8 text-center text-sm border-t border-gray-800 pt-8">
+                <p>&copy; 2023 Entre Versos Hip Hop. Todos los derechos reservados.</p>
+                <p class="mt-2">Powered by <a href="https://dualitydomain.com" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:underline">Duality Domain</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <nav id="bottomNav" class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-90 backdrop-filter backdrop-blur-lg">
+        <div class="container mx-auto px-4 py-2 flex justify-around items-center">
+            <a href="#hero" class="text-center"><i class="fas fa-home text-2xl"></i><span class="block text-xs">Inicio</span></a>
+            <a href="#playlists" class="text-center"><i class="fas fa-music text-2xl"></i><span class="block text-xs">Playlists</span></a>
+            <a href="#shorts" class="text-center"><i class="fas fa-video text-2xl"></i><span class="block text-xs">Shorts</span></a>
+            <a href="#sponsors" class="text-center"><i class="fas fa-handshake text-2xl"></i><span class="block text-xs">Patrocinadores</span></a>
+            <a href="#about" class="text-center"><i class="fas fa-info-circle text-2xl"></i><span class="block text-xs">Nosotros</span></a>
+        </div>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>

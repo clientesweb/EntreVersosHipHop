@@ -1,0 +1,57 @@
+:root {
+  --orange: #FF5500;
+  --black: #000000;
+  --white: #FFFFFF;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+}
+
+.text-orange-600 {
+  color: var(--orange);
+}
+
+.bg-orange-600 {
+  background-color: var(--orange);
+}
+
+.hover\:bg-orange-700:hover {
+  background-color: #E64D00;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--orange) !important;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: var(--orange) !important;
+}
+
+#shortsContainer::-webkit-scrollbar {
+  height: 8px;
+}
+
+#shortsContainer::-webkit-scrollbar-track {
+  background: #1a202c;
+}
+
+#shortsContainer::-webkit-scrollbar-thumb {
+  background: var(--orange);
+  border-radius: 4px;
+}
+
+#shortsContainer::-webkit-scrollbar-thumb:hover {
+  background: #E64D00;
+}
+
+@media (max-width: 640px) {
+  .text-5xl {
+    font-size:  2.5rem;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem;
+  }
+}
