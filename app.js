@@ -1,5 +1,5 @@
 // Replace with your actual YouTube API key
-const API_KEY = 'YOUR_YOUTUBE_API_KEY';
+const API_KEY = 'AIzaSyBf5wzygVChOBD-3pPb4BR2v5NA4uE9J5c';
 
 // PWA installation
 let deferredPrompt;
@@ -160,7 +160,7 @@ function initSwipers() {
 // Fetch playlists
 async function fetchPlaylists() {
   try {
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=YOUR_CHANNEL_ID&maxResults=10&key=${API_KEY}`);
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=10&key=${API_KEY}`);
     const data = await response.json();
     const playlistsContainer = document.getElementById('playlistsContainer');
     
@@ -184,7 +184,7 @@ async function fetchPlaylists() {
 // Fetch shorts
 async function fetchShorts() {
   try {
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=YOUR_CHANNEL_ID&type=video&videoDuration=short&maxResults=10&key=${API_KEY}`);
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&type=video&videoDuration=short&maxResults=10&key=${API_KEY}`);
     const data = await response.json();
     const shortsContainer = document.getElementById('shortsContainer');
     
