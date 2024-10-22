@@ -63,33 +63,6 @@ function initSwipers() {
     },
   });
 
-  new Swiper('.playlist-swiper', {
-    slidesPerView: 1,
-    spaceBetween: 10,
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-    breakpoints: {
-      640: {
-        slidesPerView: 2,
-        spaceBetween: 20,
-      },
-      768: {
-        slidesPerView: 3,
-        spaceBetween: 30,
-      },
-      1024: {
-        slidesPerView: 4,
-        spaceBetween: 40,
-      },
-    },
-  });
-
   new Swiper('.sponsor-swiper', {
     slidesPerView: 2,
     spaceBetween: 10,
@@ -168,13 +141,48 @@ async function fetchPlaylists() {
       const playlistElement = document.createElement('div');
       playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       playlistElement.innerHTML = `
-        <img data-src="${playlist.snippet.thumbnails.medium.url}" alt="${playlist.snippet.title}" class="lazyload w-full h-48 object-cover">
+        <div class="aspect-w-16 aspect-h-9">
+          <iframe
+            src="https://www.youtube.com/embed/videoseries?list=${playlist.id}"
+            title="${playlist.snippet.title}"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
         <div class="p-4">
           <h3 class="text-xl font-bold mb-2 text-orange-500">${playlist.snippet.title}</h3>
           <p class="text-gray-400">${playlist.snippet.description.slice(0, 100)}...</p>
         </div>
       `;
       playlistsContainer.appendChild(playlistElement);
+    });
+
+    new Swiper('.playlist-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 10,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+          spaceBetween: 20,
+        },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+        },
+        1024: {
+          slidesPerView: 4,
+          spaceBetween: 40,
+        },
+      },
     });
   } catch (error) {
     console.error('Error fetching playlists:', error);
@@ -192,7 +200,15 @@ async function fetchShorts() {
       const shortElement = document.createElement('div');
       shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       shortElement.innerHTML = `
-        <img data-src="${short.snippet.thumbnails.medium.url}" alt="${short.snippet.title}" class="lazyload w-full h-36 object-cover">
+        <div class="aspect-w-9 aspect-h-16">
+          <iframe
+            src="https://www.youtube.com/embed/${short.id.videoId}"
+            title="${short.snippet.title}"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
         <div class="p-2">
           <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
         </div>
@@ -366,7 +382,9 @@ function initMap() {
 }
 
 // Initialize app
-function init() {
+function init() 
+
+ {
   initSwipers();
   fetchPlaylists();
   fetchShorts();
