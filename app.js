@@ -135,9 +135,21 @@ async function fetchPlaylists() {
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=10&key=${API_KEY}`);
     const data = await response.json();
+    console.log('Playlists data:', data); // Log the data to check what we're receiving
     const playlistsContainer = document.getElementById('playlistsContainer');
     
+    if (!playlistsContainer) {
+      console.error('Playlists container not found in the DOM');
+      return;
+    }
+    
     playlistsContainer.innerHTML = ''; // Clear existing content
+    
+    if (!data.items || data.items.length === 0) {
+      console.log('No playlists found');
+      playlistsContainer.innerHTML = '<p class="text-center text-gray-500">No playlists available at the moment.</p>';
+      return;
+    }
     
     data.items.forEach(playlist => {
       const playlistElement = document.createElement('div');
@@ -199,9 +211,21 @@ async function fetchShorts() {
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&type=video&videoDuration=short&maxResults=10&key=${API_KEY}`);
     const data = await response.json();
+    console.log('Shorts data:', data); // Log the data to check what we're receiving
     const shortsContainer = document.getElementById('shortsContainer');
     
+    if (!shortsContainer) {
+      console.error('Shorts container not found in the DOM');
+      return;
+    }
+    
     shortsContainer.innerHTML = ''; // Clear existing content
+    
+    if (!data.items || data.items.length === 0) {
+      console.log('No shorts found');
+      shortsContainer.innerHTML = '<p class="text-center text-gray-500">No shorts available at the moment.</p>';
+      return;
+    }
     
     data.items.forEach(short => {
       const shortElement = document.createElement('div');
@@ -226,6 +250,7 @@ async function fetchShorts() {
 
 // Function to play a playlist
 function playPlaylist(playlistId) {
+  console.log('Playing playlist:', playlistId); // Log the playlist ID
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
   modal.innerHTML = `
@@ -251,6 +276,7 @@ function playPlaylist(playlistId) {
 
 // Function to play a short
 function playShort(videoId) {
+  console.log('Playing short:', videoId); // Log the video ID
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
   modal.innerHTML = `
@@ -349,6 +375,7 @@ const artists = [
       twitter: 'grafitero_urbano',
       youtube: 'GrafiteroUrbano'
     },
+    
     music: ['VIDEO_ID_7', 'VIDEO_ID_8']
   },
 ];
@@ -442,9 +469,7 @@ function initMap() {
 }
 
 // Initialize app
-function init() 
-
- {
+function init() {
   initSwipers();
   fetchPlaylists();
   fetchShorts();
