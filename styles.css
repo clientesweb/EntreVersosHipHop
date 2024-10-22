@@ -1,23 +1,31 @@
+@import 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css';
+
 :root {
   --orange: #FF5500;
+  --red: #FF0000;
   --black: #000000;
   --white: #FFFFFF;
 }
 
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
-.text-orange-600 {
+.text-orange-500 {
   color: var(--orange);
 }
 
-.bg-orange-600 {
+.bg-orange-500 {
   background-color: var(--orange);
 }
 
-.hover\:bg-orange-700:hover {
-  background-color: #E64D00;
+.from-orange-500 {
+  --tw-gradient-from: var(--orange);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 85, 0, 0));
+}
+
+.to-red-500 {
+  --tw-gradient-to: var(--red);
 }
 
 .swiper-button-next,
@@ -29,21 +37,15 @@ body {
   background-color: var(--orange) !important;
 }
 
-#shortsContainer::-webkit-scrollbar {
-  height: 8px;
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-#shortsContainer::-webkit-scrollbar-track {
-  background: #1a202c;
-}
-
-#shortsContainer::-webkit-scrollbar-thumb {
-  background: var(--orange);
-  border-radius: 4px;
-}
-
-#shortsContainer::-webkit-scrollbar-thumb:hover {
-  background: #E64D00;
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .artist-card {
@@ -54,6 +56,34 @@ body {
   transform: scale(1.05);
 }
 
+#preloader {
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+#preloader.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
 @media (max-width: 640px) {
   .text-5xl {
     font-size: 2.5rem;
@@ -62,13 +92,4 @@ body {
   .text-xl {
     font-size: 1.25rem;
   }
-}
-
-#preloader {
-  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
-}
-
-#preloader.hidden {
-  opacity: 0;
-  visibility: hidden;
 }
