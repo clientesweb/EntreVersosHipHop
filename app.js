@@ -1,6 +1,17 @@
 // Replace with your actual YouTube API key
 const API_KEY = 'AIzaSyBf5wzygVChOBD-3pPb4BR2v5NA4uE9J5c';
 
+// Load YouTube API
+function loadYouTubeAPI() {
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
+// Call this function at the beginning
+loadYouTubeAPI();
+
 // PWA installation
 let deferredPrompt;
 const installButton = document.getElementById('installPWA');
@@ -168,13 +179,25 @@ async function fetchPlaylists() {
       const playlistElement = document.createElement('div');
       playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       playlistElement.innerHTML = `
-        <img data-src="${playlist.snippet.thumbnails.medium.url}" alt="${playlist.snippet.title}" class="lazyload w-full h-48 object-cover">
+        <div id="player-${playlist.id}" class="w-full h-48"></div>
         <div class="p-4">
           <h3 class="text-xl font-bold mb-2 text-orange-500">${playlist.snippet.title}</h3>
           <p class="text-gray-400">${playlist.snippet.description.slice(0, 100)}...</p>
         </div>
       `;
       playlistsContainer.appendChild(playlistElement);
+
+      // Create YouTube player
+      new YT.Player(`player-${playlist.id}`, {
+        height: '100%',
+        width: '100%',
+        videoId: playlist.snippet.resourceId.videoId,
+        playerVars: {
+          autoplay: 0,
+          controls: 1,
+          rel: 0,
+        },
+      });
     });
   } catch (error) {
     console.error('Error fetching playlists:', error);
@@ -192,12 +215,26 @@ async function fetchShorts() {
       const shortElement = document.createElement('div');
       shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       shortElement.innerHTML = `
-        <img data-src="${short.snippet.thumbnails.medium.url}" alt="${short.snippet.title}" class="lazyload w-full h-36 object-cover">
+        <div id="short-${short.id.videoId}" class="w-full h-64"></div>
         <div class="p-2">
           <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
         </div>
       `;
       shortsContainer.appendChild(shortElement);
+
+      // Create YouTube player for shorts
+      new YT.Player(`short-${short.id.videoId}`, {
+        height: '100%',
+        width: '100%',
+        videoId: short.id.videoId,
+        playerVars: {
+          autoplay: 0,
+          controls: 1,
+          rel: 0,
+          loop: 1,
+          playlist: short.id.videoId,
+        },
+      });
     });
   } catch (error) {
     console.error('Error fetching shorts:', error);
@@ -355,7 +392,7 @@ document.getElementById('artistFilter').addEventListener('change', (e) => {
 
 // Initialize map
 function initMap() {
-  const map = L.map('map').setView([51.505, -0.09], 13);
+  const map =   L.map('map').setView([51.505, -0.09], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
@@ -368,12 +405,16 @@ function initMap() {
 // Initialize app
 function init() {
   initSwipers();
-  fetchPlaylists();
-  fetchShorts();
   createSponsorSlider();
   createArtistsSection();
   initMap();
   reveal();
+
+  // Wait for YouTube API to be ready
+  window.onYouTubeIframeAPIReady = function() {
+    fetchPlaylists();
+    fetchShorts();
+  };
 }
 
 // Run init when the DOM is fully loaded
