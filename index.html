@@ -7,14 +7,18 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
 </head>
 <body class="bg-black text-white">
-    <header class="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-90 backdrop-filter backdrop-blur-lg">
+    <div id="preloader" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div class="w-16 h-16 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <header class="fixed top-0 left-0 right-0 z-40 bg-black bg-opacity-90 backdrop-filter backdrop-blur-lg">
         <div id="top-banner" class="bg-orange-600 text-white py-2">
             <div class="swiper top-banner-swiper">
                 <div class="swiper-wrapper">
@@ -25,11 +29,11 @@
             </div>
         </div>
         <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
-            <div class="flex items-center">
-                <img src="logo.png" alt="Entre Versos Hip Hop Logo" class="h-12 mr-4">
-                <h1 class="text-2xl font-bold text-orange-600">Entre Versos Hip Hop</h1>
+            <div class="w-1/3"></div>
+            <div class="w-1/3 flex justify-center">
+                <img src="logo.png" alt="Entre Versos Hip Hop Logo" class="h-16">
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="w-1/3 flex justify-end items-center space-x-4">
                 <a href="#" class="text-xl hover:text-orange-600 transition duration-300"><i class="fab fa-facebook"></i></a>
                 <a href="#" class="text-xl hover:text-orange-600 transition duration-300"><i class="fab fa-twitter"></i></a>
                 <a href="#" class="text-xl hover:text-orange-600 transition duration-300"><i class="fab fa-instagram"></i></a>
@@ -81,6 +85,15 @@
             </div>
         </section>
 
+        <section id="artists" class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Nuestros Artistas</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="artistsContainer">
+                    <!-- Artist cards will be dynamically added here -->
+                </div>
+            </div>
+        </section>
+
         <section id="sponsors" class="py-16">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Nuestros Patrocinadores</h2>
@@ -93,21 +106,40 @@
 
         <section id="about" class="py-16 bg-gray-900">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Sobre Nosotros</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h3 class="text-2xl font-bold mb-4 text-orange-600">Nuestra Historia</h3>
-                        <p class="mb-4">Entre Versos Hip Hop nació de una pasión por la cultura y música auténtica del hip hop. Nos esforzamos por llevar los mejores beats y rimas a nuestra audiencia.</p>
+                <h2 class="text-3xl font-bold mb-8 text-center text-orange-600">Nuestra Historia</h2>
+                <div class="swiper about-swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="flex flex-col md:flex-row items-center">
+                                <img src="https://source.unsplash.com/random/800x600?hiphop" alt="Inicios" class="w-full md:w-1/2 h-64 object-cover rounded-lg mb-4 md:mb-0 md:mr-4">
+                                <div class="md:w-1/2">
+                                    <h3 class="text-2xl font-bold mb-4 text-orange-600">2010: Nuestros Inicios</h3>
+                                    <p>Entre Versos Hip Hop nació de la pasión de un grupo de amigos por la cultura y música auténtica del hip hop. Comenzamos organizando pequeños eventos en nuestra comunidad local.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="flex flex-col md:flex-row items-center">
+                                <div class="md:w-1/2 md:mr-4">
+                                    <h3 class="text-2xl font-bold mb-4 text-orange-600">2015: Expansión Nacional</h3>
+                                    <p>Tras años de crecimiento constante, logramos expandirnos a nivel nacional. Organizamos nuestro primer festival de hip hop, reuniendo a los mejores talentos del país.</p>
+                                </div>
+                                <img src="https://source.unsplash.com/random/800x600?concert" alt="Expansión" class="w-full md:w-1/2 h-64 object-cover rounded-lg mt-4 md:mt-0">
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="flex flex-col md:flex-row items-center">
+                                <img src="https://source.unsplash.com/random/800x600?studio" alt="Actualidad" class="w-full md:w-1/2 h-64 object-cover rounded-lg mb-4 md:mb-0 md:mr-4">
+                                <div class="md:w-1/2">
+                                    <h3 class="text-2xl font-bold mb-4 text-orange-600">Hoy: Referentes del Hip Hop</h3>
+                                    <p>Actualmente, Entre Versos Hip Hop es reconocido como uno de los principales promotores de la cultura hip hop en Latinoamérica. Seguimos innovando y apoyando a nuevos talentos.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-2xl font-bold mb-4 text-orange-600">Nuestros Valores</h3>
-                        <ul class="list-disc list-inside">
-                            <li><i class="fas fa-check text-orange-600 mr-2"></i>Autenticidad en la música</li>
-                            <li><i class="fas fa-check text-orange-600 mr-2"></i>Apoyo a artistas emergentes</li>
-                            <li><i class="fas fa-check text-orange-600 mr-2"></i>Preservación de la cultura hip hop</li>
-                            <li><i class="fas fa-check text-orange-600 mr-2"></i>Innovación en la producción de sonido</li>
-                        </ul>
-                    </div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
                 </div>
             </div>
         </section>
@@ -123,8 +155,8 @@
     <footer class="bg-gray-900 py-8">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-2xl font-bold text-orange-600 mb-4">Entre Versos Hip Hop</h3>
+                <div class="flex flex-col items-center md:items-start">
+                    <img src="logo.png" alt="Entre Versos Hip Hop Logo" class="h-16 mb-4">
                     <p class="text-sm mb-4">Elevando la Cultura del Hip Hop</p>
                     <div class="flex space-x-4">
                         <a href="#" class="text-2xl hover:text-orange-600 transition duration-300"><i class="fab fa-facebook"></i></a>
@@ -139,7 +171,8 @@
                         <li><a href="#" class="hover:text-orange-600 transition duration-300">Inicio</a></li>
                         <li><a href="#playlists" class="hover:text-orange-600 transition duration-300">Playlists</a></li>
                         <li><a href="#shorts" class="hover:text-orange-600 transition duration-300">Shorts</a></li>
-                        <li><a href="#about" class="hover:text-orange-600 transition duration-300">Sobre Nosotros</a></li>
+                        <li><a href="#artists" class="hover:text-orange-600 transition duration-300">Artistas</a></li>
+                        <li><a href="#about" class="hover:text-orange-600 transition duration-300">Nuestra Historia</a></li>
                         <li><a href="#location" class="hover:text-orange-600 transition duration-300">Ubicación</a></li>
                     </ul>
                 </div>
@@ -157,13 +190,13 @@
         </div>
     </footer>
 
-    <nav id="bottomNav" class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-90 backdrop-filter backdrop-blur-lg">
+    <nav id="bottomNav" class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-90 backdrop-filter  backdrop-blur-lg">
         <div class="container mx-auto px-4 py-2 flex justify-around items-center">
             <a href="#hero" class="text-center"><i class="fas fa-home text-2xl"></i><span class="block text-xs">Inicio</span></a>
             <a href="#playlists" class="text-center"><i class="fas fa-music text-2xl"></i><span class="block text-xs">Playlists</span></a>
             <a href="#shorts" class="text-center"><i class="fas fa-video text-2xl"></i><span class="block text-xs">Shorts</span></a>
-            <a href="#sponsors" class="text-center"><i class="fas fa-handshake text-2xl"></i><span class="block text-xs">Patrocinadores</span></a>
-            <a href="#about" class="text-center"><i class="fas fa-info-circle text-2xl"></i><span class="block text-xs">Nosotros</span></a>
+            <a href="#artists" class="text-center"><i class="fas fa-microphone text-2xl"></i><span class="block text-xs">Artistas</span></a>
+            <a href="#about" class="text-center"><i class="fas fa-info-circle text-2xl"></i><span class="block text-xs">Historia</span></a>
         </div>
     </nav>
 
