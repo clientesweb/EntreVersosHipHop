@@ -27,6 +27,21 @@ window.addEventListener('load', () => {
   preloader.classList.add('hidden');
 });
 
+// Reveal animations
+const reveal = () => {
+  const reveals = document.querySelectorAll('.reveal');
+  reveals.forEach((el) => {
+    const windowHeight = window.innerHeight;
+    const elementTop = el.getBoundingClientRect().top;
+    const elementVisible = 150;
+    if (elementTop < windowHeight - elementVisible) {
+      el.classList.add('active');
+    }
+  });
+};
+
+window.addEventListener('scroll', reveal);
+
 // Initialize Swiper
 function initSwipers() {
   new Swiper('.top-banner-swiper', {
@@ -113,6 +128,33 @@ function initSwipers() {
       clickable: true,
     },
   });
+
+  new Swiper('.artist-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      768: {
+        slidesPerView: 3,
+        spaceBetween: 30,
+      },
+      1024: {
+        slidesPerView: 4,
+        spaceBetween: 40,
+      },
+    },
+  });
 }
 
 // Fetch playlists
@@ -124,11 +166,11 @@ async function fetchPlaylists() {
     
     data.items.forEach(playlist => {
       const playlistElement = document.createElement('div');
-      playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg';
+      playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       playlistElement.innerHTML = `
-        <img src="${playlist.snippet.thumbnails.medium.url}" alt="${playlist.snippet.title}" class="w-full h-48 object-cover">
+        <img data-src="${playlist.snippet.thumbnails.medium.url}" alt="${playlist.snippet.title}" class="lazyload w-full h-48 object-cover">
         <div class="p-4">
-          <h3 class="text-xl font-bold mb-2 text-orange-600">${playlist.snippet.title}</h3>
+          <h3 class="text-xl font-bold mb-2 text-orange-500">${playlist.snippet.title}</h3>
           <p class="text-gray-400">${playlist.snippet.description.slice(0, 100)}...</p>
         </div>
       `;
@@ -148,11 +190,11 @@ async function fetchShorts() {
     
     data.items.forEach(short => {
       const shortElement = document.createElement('div');
-      shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg';
+      shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
       shortElement.innerHTML = `
-        <img src="${short.snippet.thumbnails.medium.url}" alt="${short.snippet.title}" class="w-full h-36 object-cover">
+        <img data-src="${short.snippet.thumbnails.medium.url}" alt="${short.snippet.title}" class="lazyload w-full h-36 object-cover">
         <div class="p-2">
-          <h4 class="text-sm font-bold text-orange-600">${short.snippet.title}</h4>
+          <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
         </div>
       `;
       shortsContainer.appendChild(shortElement);
@@ -177,35 +219,139 @@ function createSponsorSlider() {
     const sponsorElement = document.createElement('div');
     sponsorElement.className = 'swiper-slide flex justify-center items-center';
     sponsorElement.innerHTML = `
-      <img src="${sponsor.logo}" alt="${sponsor.name}" class="w-32 h-32 object-contain">
+      <img data-src="${sponsor.logo}" alt="${sponsor.name}" class="lazyload w-32 h-32 object-contain">
     `;
     sponsorSlider.appendChild(sponsorElement);
   });
 }
 
 // Create artists section
-function createArtistsSection() {
-  const artists = [
-    { name: 'MC Rítmico', image: 'https://source.unsplash.com/random/400x400?rapper', description: 'Maestro del flow y las rimas ingeniosas' },
-    { name: 'DJ Scratch', image: 'https://source.unsplash.com/random/400x400?dj', description: 'Virtuoso de los platos y creador de beats únicos' },
-    { name: 'B-Girl Flex', image: 'https://source.unsplash.com/random/400x400?dancer', description: 'Reina del breakdance y la expresión corporal' },
-    { name: 'Grafitero Urbano', image: 'https://source.unsplash.com/random/400x400?graffiti', description: 'Artista visual que da color a nuestros eventos' },
-  ];
+const artists = [
+  { 
+    name: 'MC Rítmico', 
+    image: 'https://source.unsplash.com/random/400x400?rapper', 
+    description: 'Maestro del flow y las rimas ingeniosas',
+    type: 'mc',
+    social: {
+      instagram: 'mc_ritmico',
+      twitter: 'mc_ritmico',
+      youtube: 'MCRitmico'
+    },
+    music: ['VIDEO_ID_1', 'VIDEO_ID_2']
+  },
+  { 
+    name: 'DJ Scratch', 
+    image: 'https://source.unsplash.com/random/400x400?dj', 
+    description: 'Virtuoso de los platos y creador de beats únicos',
+    type: 'dj',
+    social: {
+      instagram: 'dj_scratch',
+      twitter: 'dj_scratch',
+      youtube: 'DJScratch'
+    },
+    music: ['VIDEO_ID_3', 'VIDEO_ID_4']
+  },
+  { 
+    name: 'B-Girl Flex', 
+    image: 'https://source.unsplash.com/random/400x400?dancer', 
+    description: 'Reina del breakdance y la expresión corporal',
+    type: 'dancer',
+    social: {
+      instagram: 'bgirl_flex',
+      twitter: 'bgirl_flex',
+      youtube: 'BGirlFlex'
+    },
+    music: ['VIDEO_ID_5', 'VIDEO_ID_6']
+  },
+  { 
+    name: 'Grafitero Urbano', 
+    image: 'https://source.unsplash.com/random/400x400?graffiti', 
+    description: 'Artista visual que da color a nuestros eventos',
+    type: 'graffiti',
+    social: {
+      instagram: 'grafitero_urbano',
+      twitter: 'grafitero_urbano',
+      youtube: 'GrafiteroUrbano'
+    },
+    music: ['VIDEO_ID_7', 'VIDEO_ID_8']
+  },
+];
 
+function createArtistsSection() {
   const artistsContainer = document.getElementById('artistsContainer');
   artists.forEach(artist => {
     const artistElement = document.createElement('div');
-    artistElement.className = 'artist-card bg-gray-800 rounded-lg overflow-hidden shadow-lg';
+    artistElement.className = 'swiper-slide artist-card bg-gray-800 rounded-lg overflow-hidden shadow-lg';
     artistElement.innerHTML = `
-      <img src="${artist.image}" alt="${artist.name}" class="w-full h-64 object-cover">
+      <img data-src="${artist.image}" alt="${artist.name}" class="lazyload w-full h-64 object-cover">
       <div class="p-4">
-        <h3 class="text-xl font-bold mb-2 text-orange-600">${artist.name}</h3>
+        <h3 class="text-xl font-bold mb-2 text-orange-500">${artist.name}</h3>
         <p class="text-gray-400">${artist.description}</p>
+        <button class="mt-4 bg-orange-500 text-white px-4 py-2 rounded-full transition-transform transform hover:scale-105" onclick="openArtistModal('${artist.name}')">Ver más</button>
       </div>
     `;
     artistsContainer.appendChild(artistElement);
   });
 }
+
+function openArtistModal(artistName) {
+  const artist = artists.find(a => a.name === artistName);
+  if (!artist) return;
+
+  const modal = document.getElementById('artistModal');
+  const modalArtistName = document.getElementById('modalArtistName');
+  const modalArtistImage = document.getElementById('modalArtistImage');
+  const modalArtistDescription = document.getElementById('modalArtistDescription');
+  const modalArtistSocial = document.getElementById('modalArtistSocial');
+  const modalArtistMusic = document.getElementById('modalArtistMusic');
+
+  modalArtistName.textContent = artist.name;
+  modalArtistImage.src = artist.image;
+  modalArtistImage.alt = artist.name;
+  modalArtistDescription.textContent = artist.description;
+
+  modalArtistSocial.innerHTML = '';
+  for (const [platform, username] of Object.entries(artist.social)) {
+    const link = document.createElement('a');
+    link.href = `https://www.${platform}.com/${username}`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.innerHTML = `<i class="fab fa-${platform} text-2xl"></i>`;
+    modalArtistSocial.appendChild(link);
+  }
+
+  modalArtistMusic.innerHTML = '';
+  artist.music.forEach(videoId => {
+    const iframe = document.createElement('iframe');
+    iframe.width = '100%';
+    iframe.height = '315';
+    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+    iframe.frameBorder = '0';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    modalArtistMusic.appendChild(iframe);
+  });
+
+  modal.classList.remove('hidden');
+}
+
+document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('artistModal').classList.add('hidden');
+});
+
+document.getElementById('artistFilter').addEventListener('change', (e) => {
+  const filter = e.target.value;
+  const artistCards = document.querySelectorAll('.artist-card');
+  artistCards.forEach(card => {
+    const artistName = card.querySelector('h3').textContent;
+    const artist = artists.find(a => a.name === artistName);
+    if (filter === 'all' || artist.type === filter) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+});
 
 // Initialize map
 function initMap() {
@@ -227,7 +373,26 @@ function init() {
   createSponsorSlider();
   createArtistsSection();
   initMap();
+  reveal();
 }
 
 // Run init when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init);
+
+// Lazy load images
+document.addEventListener('lazyloaded', function(e) {
+  e.target.parentNode.classList.add('image-loaded');
+});
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registered successfully:', registration);
+      })
+      .catch(error => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}
