@@ -1,6 +1,8 @@
 // Replace with your actual YouTube API key
 const API_KEY = 'AIzaSyBf5wzygVChOBD-3pPb4BR2v5NA4uE9J5c';
 
+let youtubeAPIReady = false;
+
 // Load YouTube API
 function loadYouTubeAPI() {
   const tag = document.createElement('script');
@@ -9,8 +11,13 @@ function loadYouTubeAPI() {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
-// Call this function at the beginning
-loadYouTubeAPI();
+// YouTube API Ready callback
+window.onYouTubeIframeAPIReady = function() {
+  console.log('YouTube API is ready');
+  youtubeAPIReady = true;
+  fetchPlaylists();
+  fetchShorts();
+};
 
 // PWA installation
 let deferredPrompt;
@@ -170,10 +177,25 @@ function initSwipers() {
 
 // Fetch playlists
 async function fetchPlaylists() {
+  if (!youtubeAPIReady) {
+    console.log('YouTube API not ready yet. Waiting to fetch playlists...');
+    setTimeout(fetchPlaylists, 1000);
+    return;
+  }
+
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=10&key=${API_KEY}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
+    console.log('Playlists data:', data);
+    
     const playlistsContainer = document.getElementById('playlistsContainer');
+    if (!playlistsContainer) {
+      console.error('Playlists container not found in the DOM');
+      return;
+    }
     
     data.items.forEach(playlist => {
       const playlistElement = document.createElement('div');
@@ -199,6 +221,35 @@ async function fetchPlaylists() {
         },
       });
     });
+
+    // Reinitialize the Swiper for playlists
+    new Swiper('.playlist-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 10,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+          spaceBetween: 20,
+        },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+        },
+        1024: {
+          slidesPerView: 4,
+          spaceBetween: 40,
+        },
+      },
+    });
+
   } catch (error) {
     console.error('Error fetching playlists:', error);
   }
@@ -206,10 +257,25 @@ async function fetchPlaylists() {
 
 // Fetch shorts
 async function fetchShorts() {
+  if (!youtubeAPIReady) {
+    console.log('YouTube API not ready yet. Waiting to fetch shorts...');
+    setTimeout(fetchShorts, 1000);
+    return;
+  }
+
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&type=video&videoDuration=short&maxResults=10&key=${API_KEY}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
+    console.log('Shorts data:', data);
+    
     const shortsContainer = document.getElementById('shortsContainer');
+    if (!shortsContainer) {
+      console.error('Shorts container not found in the DOM');
+      return;
+    }
     
     data.items.forEach(short => {
       const shortElement = document.createElement('div');
@@ -337,7 +403,7 @@ function openArtistModal(artistName) {
 
   const modal = document.getElementById('artistModal');
   const modalArtistName = document.getElementById('modalArtistName');
-  const modalArtistImage = document.getElementById('modalArtistImage');
+  const modalArtistImage =   document.getElementById('modalArtistImage');
   const modalArtistDescription = document.getElementById('modalArtistDescription');
   const modalArtistSocial = document.getElementById('modalArtistSocial');
   const modalArtistMusic = document.getElementById('modalArtistMusic');
@@ -392,7 +458,7 @@ document.getElementById('artistFilter').addEventListener('change', (e) => {
 
 // Initialize map
 function initMap() {
-  const map =   L.map('map').setView([51.505, -0.09], 13);
+  const map = L.map('map').setView([51.505, -0.09], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
@@ -409,12 +475,7 @@ function init() {
   createArtistsSection();
   initMap();
   reveal();
-
-  // Wait for YouTube API to be ready
-  window.onYouTubeIframeAPIReady = function() {
-    fetchPlaylists();
-    fetchShorts();
-  };
+  loadYouTubeAPI();
 }
 
 // Run init when the DOM is fully loaded
