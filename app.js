@@ -137,30 +137,38 @@ async function fetchPlaylists() {
     const data = await response.json();
     const playlistsContainer = document.getElementById('playlistsContainer');
     
+    playlistsContainer.innerHTML = ''; // Clear existing content
+    
     data.items.forEach(playlist => {
       const playlistElement = document.createElement('div');
-      playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
+      playlistElement.className = 'swiper-slide';
       playlistElement.innerHTML = `
-        <div class="aspect-w-16 aspect-h-9">
-          <iframe
-            src="https://www.youtube.com/embed/videoseries?list=${playlist.id}"
-            title="${playlist.snippet.title}"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        </div>
-        <div class="p-4">
-          <h3 class="text-xl font-bold mb-2 text-orange-500">${playlist.snippet.title}</h3>
-          <p class="text-gray-400">${playlist.snippet.description.slice(0, 100)}...</p>
+        <div class="bg-white rounded-lg overflow-hidden shadow-lg">
+          <div class="relative">
+            <img src="${playlist.snippet.thumbnails.medium.url}" alt="${playlist.snippet.title}" class="w-full h-48 object-cover">
+            <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+              PLAYLIST
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-2 line-clamp-2">${playlist.snippet.title}</h3>
+            <p class="text-sm text-gray-600 line-clamp-2">${playlist.snippet.description}</p>
+            <button onclick="playPlaylist('${playlist.id}')" class="mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full flex items-center justify-center w-full">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 4l12 6-12 6z"/>
+              </svg>
+              Reproducir todo
+            </button>
+          </div>
         </div>
       `;
       playlistsContainer.appendChild(playlistElement);
     });
 
+    // Reinitialize Swiper
     new Swiper('.playlist-swiper', {
       slidesPerView: 1,
-      spaceBetween: 10,
+      spaceBetween: 20,
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
@@ -172,15 +180,12 @@ async function fetchPlaylists() {
       breakpoints: {
         640: {
           slidesPerView: 2,
-          spaceBetween: 20,
         },
         768: {
           slidesPerView: 3,
-          spaceBetween: 30,
         },
         1024: {
           slidesPerView: 4,
-          spaceBetween: 40,
         },
       },
     });
@@ -196,28 +201,83 @@ async function fetchShorts() {
     const data = await response.json();
     const shortsContainer = document.getElementById('shortsContainer');
     
+    shortsContainer.innerHTML = ''; // Clear existing content
+    
     data.items.forEach(short => {
       const shortElement = document.createElement('div');
-      shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
+      shortElement.className = 'relative w-full pb-[177.77%] bg-gray-100 rounded-lg overflow-hidden shadow-lg';
       shortElement.innerHTML = `
-        <div class="aspect-w-9 aspect-h-16">
-          <iframe
-            src="https://www.youtube.com/embed/${short.id.videoId}"
-            title="${short.snippet.title}"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+        <img src="${short.snippet.thumbnails.medium.url}" alt="${short.snippet.title}" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black to-transparent p-4">
+          <h4 class="text-white font-semibold line-clamp-2">${short.snippet.title}</h4>
         </div>
-        <div class="p-2">
-          <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
-        </div>
+        <button onclick="playShort('${short.id.videoId}')" class="absolute inset-0 w-full h-full flex items-center justify-center">
+          <svg class="w-16 h-16 text-white opacity-80 hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M4 4l12 6-12 6z"/>
+          </svg>
+        </button>
       `;
       shortsContainer.appendChild(shortElement);
     });
   } catch (error) {
     console.error('Error fetching shorts:', error);
   }
+}
+
+// Function to play a playlist
+function playPlaylist(playlistId) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+  modal.innerHTML = `
+    <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-4xl">
+      <div class="relative pt-[56.25%]">
+        <iframe 
+          src="https://www.youtube.com/embed/videoseries?list=${playlistId}" 
+          class="absolute inset-0 w-full h-full"
+          frameborder="0" 
+          allow="autoplay; encrypted-media" 
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div class="p-4 flex justify-end">
+        <button onclick="closeModal(this)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// Function to play a short
+function playShort(videoId) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+  modal.innerHTML = `
+    <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-sm">
+      <div class="relative pt-[177.77%]">
+        <iframe 
+          src="https://www.youtube.com/embed/${videoId}" 
+          class="absolute inset-0 w-full h-full"
+          frameborder="0" 
+          allow="autoplay; encrypted-media" 
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div class="p-4 flex justify-end">
+        <button onclick="closeModal(this)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// Function to close modal
+function closeModal(button) {
+  const modal = button.closest('.fixed');
+  modal.remove();
 }
 
 // Create sponsor slider
