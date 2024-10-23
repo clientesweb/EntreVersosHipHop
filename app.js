@@ -1,8 +1,6 @@
 // Replace with your actual YouTube API key
 const API_KEY = 'AIzaSyBf5wzygVChOBD-3pPb4BR2v5NA4uE9J5c';
 
-let youtubeAPIReady = false;
-
 // Load YouTube API
 function loadYouTubeAPI() {
   const tag = document.createElement('script');
@@ -10,14 +8,6 @@ function loadYouTubeAPI() {
   const firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
-
-// YouTube API Ready callback
-window.onYouTubeIframeAPIReady = function() {
-  console.log('YouTube API is ready');
-  youtubeAPIReady = true;
-  fetchPlaylists();
-  fetchShorts();
-};
 
 // PWA installation
 let deferredPrompt;
@@ -175,54 +165,27 @@ function initSwipers() {
   });
 }
 
-// Fetch playlists
-async function fetchPlaylists() {
-  if (!youtubeAPIReady) {
-    console.log('YouTube API not ready yet. Waiting to fetch playlists...');
-    setTimeout(fetchPlaylists, 1000);
-    return;
-  }
-
+// Fetch and display playlists
+async function fetchAndDisplayPlaylists() {
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=10&key=${API_KEY}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
     const data = await response.json();
-    console.log('Playlists data:', data);
-    
     const playlistsContainer = document.getElementById('playlistsContainer');
-    if (!playlistsContainer) {
-      console.error('Playlists container not found in the DOM');
-      return;
-    }
     
     data.items.forEach(playlist => {
       const playlistElement = document.createElement('div');
-      playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
+      playlistElement.className = 'swiper-slide bg-gray-800 rounded-lg overflow-hidden shadow-lg';
       playlistElement.innerHTML = `
-        <div id="player-${playlist.id}" class="w-full h-48"></div>
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=${playlist.id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <div class="p-4">
           <h3 class="text-xl font-bold mb-2 text-orange-500">${playlist.snippet.title}</h3>
           <p class="text-gray-400">${playlist.snippet.description.slice(0, 100)}...</p>
         </div>
       `;
       playlistsContainer.appendChild(playlistElement);
-
-      // Create YouTube player
-      new YT.Player(`player-${playlist.id}`, {
-        height: '100%',
-        width: '100%',
-        videoId: playlist.snippet.resourceId.videoId,
-        playerVars: {
-          autoplay: 0,
-          controls: 1,
-          rel: 0,
-        },
-      });
     });
 
-    // Reinitialize the Swiper for playlists
+    // Reinitialize the playlist swiper
     new Swiper('.playlist-swiper', {
       slidesPerView: 1,
       spaceBetween: 10,
@@ -249,58 +212,28 @@ async function fetchPlaylists() {
         },
       },
     });
-
   } catch (error) {
     console.error('Error fetching playlists:', error);
   }
 }
 
-// Fetch shorts
-async function fetchShorts() {
-  if (!youtubeAPIReady) {
-    console.log('YouTube API not ready yet. Waiting to fetch shorts...');
-    setTimeout(fetchShorts, 1000);
-    return;
-  }
-
+// Fetch and display shorts
+async function fetchAndDisplayShorts() {
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&type=video&videoDuration=short&maxResults=10&key=${API_KEY}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
     const data = await response.json();
-    console.log('Shorts data:', data);
-    
     const shortsContainer = document.getElementById('shortsContainer');
-    if (!shortsContainer) {
-      console.error('Shorts container not found in the DOM');
-      return;
-    }
     
     data.items.forEach(short => {
       const shortElement = document.createElement('div');
-      shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105';
+      shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg';
       shortElement.innerHTML = `
-        <div id="short-${short.id.videoId}" class="w-full h-64"></div>
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/${short.id.videoId}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <div class="p-2">
           <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
         </div>
       `;
       shortsContainer.appendChild(shortElement);
-
-      // Create YouTube player for shorts
-      new YT.Player(`short-${short.id.videoId}`, {
-        height: '100%',
-        width: '100%',
-        videoId: short.id.videoId,
-        playerVars: {
-          autoplay: 0,
-          controls: 1,
-          rel: 0,
-          loop: 1,
-          playlist: short.id.videoId,
-        },
-      });
     });
   } catch (error) {
     console.error('Error fetching shorts:', error);
@@ -403,7 +336,7 @@ function openArtistModal(artistName) {
 
   const modal = document.getElementById('artistModal');
   const modalArtistName = document.getElementById('modalArtistName');
-  const modalArtistImage =   document.getElementById('modalArtistImage');
+  const modalArtistImage = document.getElementById('modalArtistImage');
   const modalArtistDescription = document.getElementById('modalArtistDescription');
   const modalArtistSocial = document.getElementById('modalArtistSocial');
   const modalArtistMusic = document.getElementById('modalArtistMusic');
@@ -449,7 +382,7 @@ document.getElementById('artistFilter').addEventListener('change', (e) => {
     const artistName = card.querySelector('h3').textContent;
     const artist = artists.find(a => a.name === artistName);
     if (filter === 'all' || artist.type === filter) {
-      card.style.display = 'block';
+      card.style.display =    'block';
     } else {
       card.style.display = 'none';
     }
@@ -470,12 +403,14 @@ function initMap() {
 
 // Initialize app
 function init() {
+  loadYouTubeAPI();
   initSwipers();
+  fetchAndDisplayPlaylists();
+  fetchAndDisplayShorts();
   createSponsorSlider();
   createArtistsSection();
   initMap();
   reveal();
-  loadYouTubeAPI();
 }
 
 // Run init when the DOM is fully loaded
