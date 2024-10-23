@@ -158,12 +158,12 @@ body {
 
 .short-item {
     flex: 0 0 auto;
-    width: 250px; /* Ajusta este valor según el tamaño que prefieras para tus shorts */
+    width: 280px; /* Ajusta este valor según el tamaño que prefieras para tus shorts */
     margin-right: 1rem;
 }
 
 @media (max-width: 640px) {
     .short-item {
-        width: 200px; /* Tamaño más pequeño para móviles */
+        width: 220px; /* Tamaño más pequeño para móviles */
     }
 }
