@@ -224,13 +224,18 @@ async function fetchAndDisplayShorts() {
     const data = await response.json();
     const shortsContainer = document.getElementById('shortsContainer');
     
+    // Limpiar el contenedor antes de agregar nuevos shorts
+    shortsContainer.innerHTML = '';
+    
     data.items.forEach(short => {
       const shortElement = document.createElement('div');
-      shortElement.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg';
+      shortElement.className = 'short-item';
       shortElement.innerHTML = `
-        <iframe width="100%" height="315" src="https://www.youtube.com/embed/${short.id.videoId}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <div class="p-2">
-          <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
+        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+          <iframe width="100%" height="315" src="https://www.youtube.com/embed/${short.id.videoId}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          <div class="p-2">
+            <h4 class="text-sm font-bold text-orange-500">${short.snippet.title}</h4>
+          </div>
         </div>
       `;
       shortsContainer.appendChild(shortElement);
