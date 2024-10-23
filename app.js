@@ -168,7 +168,7 @@ function initSwipers() {
 // Fetch and display playlists
 async function fetchAndDisplayPlaylists() {
   try {
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=10&key=${API_KEY}`);
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&maxResults=5&key=${API_KEY}`);
     const data = await response.json();
     const playlistsContainer = document.getElementById('playlistsContainer');
     
@@ -220,7 +220,7 @@ async function fetchAndDisplayPlaylists() {
 // Fetch and display shorts
 async function fetchAndDisplayShorts() {
   try {
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&type=video&videoDuration=short&maxResults=10&key=${API_KEY}`);
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCKe78SZ-nI7IA-afVIdtjFg&type=video&videoDuration=short&maxResults=5&key=${API_KEY}`);
     const data = await response.json();
     const shortsContainer = document.getElementById('shortsContainer');
     
