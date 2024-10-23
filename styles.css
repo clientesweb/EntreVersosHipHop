@@ -140,3 +140,30 @@ body {
         height: 30px;
     }
 }
+.shorts-container {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Para Firefox */
+    -ms-overflow-style: none;  /* Para Internet Explorer y Edge */
+}
+
+.shorts-container::-webkit-scrollbar {
+    display: none; /* Para Chrome, Safari y Opera */
+}
+
+.shorts-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    padding-bottom: 1rem;
+}
+
+.short-item {
+    flex: 0 0 auto;
+    width: 250px; /* Ajusta este valor según el tamaño que prefieras para tus shorts */
+    margin-right: 1rem;
+}
+
+@media (max-width: 640px) {
+    .short-item {
+        width: 200px; /* Tamaño más pequeño para móviles */
+    }
+}
